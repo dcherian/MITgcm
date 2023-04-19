@@ -70,6 +70,13 @@ C     i, j    ::  Loop counters
 #ifdef GM_BOLUS_ADVEC
       _RL rTrans(1-OLx:sNx+OLx,1-OLy:sNy+OLy)
 #endif
+#ifdef ALLOW_DIAGNOSTICS
+      LOGICAL  DIAGNOSTICS_IS_ON
+      EXTERNAL DIAGNOSTICS_IS_ON
+      _RL tmp1k(1-OLx:sNx+OLx,1-OLy:sNy+OLy)
+C-      _RL chiz  (1-OLx:sNx+OLx,1-OLy:sNy+OLy)
+#endif
+
 
 #ifdef ALLOW_AUTODIFF_TAMC
           act0 = trIdentity - 1
@@ -157,11 +164,22 @@ C-    Off-diagonal components of vertical flux
      &      - _rA(i,j,bi,bj)*maskInC(i,j,bi,bj)
      &       *( Kwx(i,j,k,bi,bj)*dTdx(i,j)
      &        + Kwy(i,j,k,bi,bj)*dTdy(i,j) )
+c-          chiz(i,j) = maskInC(i,j,bi,bj)
+c-     &       *( Kwx(i,j,k,bi,bj)*dTdx(i,j)*dTdz(i,j)
+c-     &        + Kwy(i,j,k,bi,bj)*dTdy(i,j)*dTdz(i,j) )
          ENDDO
         ENDDO
 #ifdef ALLOW_LONGSTEP
       ENDIF
 #endif /* ALLOW_LONGSTEP */
+
+#ifdef ALLOW_DIAGNOSTICS
+C-      IF ( useDiagnostics
+C-     &     .AND. DIAGNOSTICS_IS_ON('GM_CHIZ ', myThid )
+C-     &     .AND. trIdentity.EQ.1 ) THEN
+C-       CALL DIAGNOSTICS_FILL(chiz,'GM_CHIZ ', k,1,2,bi,bj,myThid)
+C-      ENDIF
+#endif /* ALLOW_DIAGNOSTICS */
 
 #ifdef GM_BOLUS_ADVEC
       IF (GM_AdvForm .AND. GM_AdvSeparate

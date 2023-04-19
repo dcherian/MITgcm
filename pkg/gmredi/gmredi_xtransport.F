@@ -84,6 +84,8 @@ C     i, j    ::  Loop counters
       LOGICAL  DIAGNOSTICS_IS_ON
       EXTERNAL DIAGNOSTICS_IS_ON
       _RL tmp1k(1-OLx:sNx+OLx,1-OLy:sNy+OLy)
+      _RL chix(1-OLx:sNx+OLx,1-OLy:sNy+OLy)
+      _RL dTdx(1-OLx:sNx+OLx,1-OLy:sNy+OLy)
 #endif
 #endif /* GM_BOLUS_ADVEC */
 
@@ -142,6 +144,14 @@ C--   Area integrated zonal flux
 #endif /* GM_NON_UNITY_DIAGONAL */
      &    *_recip_dxC(i,j,bi,bj)
      &    *(Tracer(i,j,k)-Tracer(i-1,j,k))
+
+C--   chi
+        chix(i,j) = 1
+     &    *Kux(i,j,k,bi,bj)
+     &    *_recip_dxC(i,j,bi,bj)
+     &    *_recip_dxC(i,j,bi,bj)
+     &    *(Tracer(i,j,k)-Tracer(i-1,j,k))
+     &    *(Tracer(i,j,k)-Tracer(i-1,j,k))
        ENDDO
       ENDDO
 
@@ -167,6 +177,9 @@ C-    Vertical gradients interpolated to U points
      &           (Tracer( i ,j,k)-Tracer( i ,j,kp1))
      &       )      )
 
+        dTdx(i,j) = _recip_dxC(i,j,bi,bj)
+     &    *(Tracer(i,j,k)-Tracer(i-1,j,k))
+
         ENDDO
        ENDDO
 #ifdef GM_AUTODIFF_EXCESSIVE_STORE
@@ -177,9 +190,20 @@ C-    Off-diagonal components of horizontal flux
        DO j=jMin,jMax
         DO i=iMin,iMax
         df(i,j) = df(i,j) - xA(i,j)*Kuz(i,j,k,bi,bj)*dTdz(i,j)
+        chix(i,j) = chix(i,j) + 2*Kuz(i,j,k,bi,bj)*dTdz(i,j)*dTdx(i,j)
         ENDDO
        ENDDO
       ENDIF
+
+#ifdef ALLOW_DIAGNOSTICS
+      IF ( useDiagnostics
+     &     .AND. DIAGNOSTICS_IS_ON('GM_CHIX ', myThid )
+     &     .AND. trIdentity.EQ.1 ) THEN
+
+         CALL DIAGNOSTICS_FILL(chix,'GM_CHIX ', k,1,2,bi,bj,myThid)
+      ENDIF
+#endif /* ALLOW_DIAGNOSTICS */
+
 #endif /* GM_EXTRA_DIAGONAL */
 
 #ifdef GM_BOLUS_ADVEC

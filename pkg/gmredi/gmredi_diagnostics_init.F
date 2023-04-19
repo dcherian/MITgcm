@@ -202,6 +202,29 @@ c     IF ( useDiagnotics ) THEN
         CALL DIAGNOSTICS_ADDTOLIST( diagNum,
      I       diagName, diagCode, diagUnits, diagTitle, 0, myThid )
 
+        diagName  = 'GM_CHIX'
+        diagTitle = 'Redi Temp variance dissipation rate: X component'
+        diagUnits = 'degC^2/s      '
+        diagCode  = 'SU P    MR      '
+        diagMate  = diagNum
+        CALL DIAGNOSTICS_ADDTOLIST( diagNum,
+     I    diagName, diagCode, diagUnits, diagTitle, diagMate, myThid )
+
+        diagName  = 'GM_CHIY'
+        diagTitle = 'Redi Temp variance dissipation rate: Y component'
+        diagUnits = 'degC^2/s      '
+        diagCode  = 'SV P    MR      '
+        diagMate  = diagNum
+        CALL DIAGNOSTICS_ADDTOLIST( diagNum,
+     I    diagName, diagCode, diagUnits, diagTitle, diagMate, myThid )
+
+        diagName  = 'GM_CHIZ'
+        diagTitle = 'Redi Temp variance dissipation rate: Z component'
+        diagUnits = 'degC^2/s      '
+        diagCode  = 'SM P    LR      '
+        CALL DIAGNOSTICS_ADDTOLIST( diagNum,
+     I       diagName, diagCode, diagUnits, diagTitle, 0, myThid )
+
         diagName  = 'GM_ubT  '
         diagTitle = 'Zonal Mass-Weight Bolus Transp of Pot Temp'
         diagUnits = 'degC.m^3/s      '

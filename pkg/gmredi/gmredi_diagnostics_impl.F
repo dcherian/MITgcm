@@ -44,28 +44,42 @@ C     !LOCAL VARIABLES:
       INTEGER bi,bj
       INTEGER i,j,k
       _RL tmpVar(1-OLx:sNx+OLx,1-OLy:sNy+OLy)
+      _RL chiz(1-OLx:sNx+OLx,1-OLy:sNy+OLy)
 
 C---+----1----+----2----+----3----+----4----+----5----+----6----+----7-|--+----|
 
       IF ( useDiagnostics .AND. implicitDiffusion .AND.
      &     Nr.GE.2 .AND. tempStepping ) THEN
 
-       IF ( DIAGNOSTICS_IS_ON('GM_KwzTz', myThid ) ) THEN
+       IF ( DIAGNOSTICS_IS_ON('GM_KwzTz', myThid ) .OR.
+     &      DIAGNOSTICS_IS_ON('GM_CHIZ ', myThid )) THEN
          DO bj=myByLo(myThid),myByHi(myThid)
           DO bi=myBxLo(myThid),myBxHi(myThid)
-           CALL DIAGNOSTICS_COUNT( 'GM_KwzTz', bi, bj, myThid )
+           IF ( DIAGNOSTICS_IS_ON('GM_KwzTz', myThid ) ) THEN
+             CALL DIAGNOSTICS_COUNT( 'GM_KwzTz', bi, bj, myThid )
+           ENDIF
+           IF ( DIAGNOSTICS_IS_ON('GM_CHIZ ', myThid ) ) THEN
+             CALL DIAGNOSTICS_COUNT( 'GM_CHIZ ', bi, bj, myThid )
+           ENDIF
            DO k=2,Nr
              DO j = 1, sNy
               DO i = 1, sNx
                 tmpVar(i,j) = -recip_drC(k)*rkSign
      &            *(theta(i,j,k,bi,bj)-theta(i,j,k-1,bi,bj))
      &            * maskC(i,j,k,bi,bj)*maskC(i,j,k-1,bi,bj)
+                chiz(i,j) = tmpVar(i,j) * tmpVar(i,j) *Kwz(i,j,k,bi,bj)
                 tmpVar(i,j) = tmpVar(i,j)*Kwz(i,j,k,bi,bj)
      &                                   *rA(i,j,bi,bj)
               ENDDO
              ENDDO
-             CALL DIAGNOSTICS_FILL( tmpVar, 'GM_KwzTz',
-     &                              k, 1, 2, bi, bj, myThid )
+             IF ( DIAGNOSTICS_IS_ON('GM_KwzTz', myThid ) ) THEN
+               CALL DIAGNOSTICS_FILL( tmpVar, 'GM_KwzTz',
+     &                                k, 1, 2, bi, bj, myThid )
+             ENDIF
+             IF ( DIAGNOSTICS_IS_ON('GM_CHIZ ', myThid ) ) THEN
+               CALL DIAGNOSTICS_FILL( chiz, 'GM_CHIZ ',
+     &                                k, 1, 2, bi, bj, myThid )
+             ENDIF
            ENDDO
           ENDDO
          ENDDO
