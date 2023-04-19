@@ -112,6 +112,13 @@ C-     Diffusive flux:
        CALL DIAGNOSTICS_ADDTOLIST( diagNum,
      I      diagName, diagCode, diagUnits, diagTitle, 0, myThid )
 
+       diagName  = 'CHIZ'//diagSufx
+       diagTitle = 'Variance Dissipation Rate of Pot.Temperature'
+     &           //' (Implicit part)'
+       diagCode  = 'SM      LR      '
+       CALL DIAGNOSTICS_ADDTOLIST( diagNum,
+     I      diagName, diagCode, diagUnits, diagTitle, 0, myThid )
+
 #ifdef GAD_ALLOW_TS_SOM_ADV
        diagUnits = DIAGS_MK_UNITS( trUnits, myThid )
 
@@ -236,6 +243,13 @@ C-     Diffusive flux:
        diagTitle = 'Vertical Diffusive Flux of '//locName
      &           //'(Implicit part)'
        diagCode  = 'WM      LR      '
+       CALL DIAGNOSTICS_ADDTOLIST( diagNum,
+     I      diagName, diagCode, diagUnits, diagTitle, 0, myThid )
+
+       diagName  = 'CHIZ'//diagSufx
+       diagTitle = 'Variance Dissipation Rate of Salinity'
+     &           //' (Implicit part)'
+       diagCode  = 'SM      LR      '
        CALL DIAGNOSTICS_ADDTOLIST( diagNum,
      I      diagName, diagCode, diagUnits, diagTitle, 0, myThid )
 

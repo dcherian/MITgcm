@@ -92,6 +92,7 @@ C msgBuf    :: Informational/error message buffer
       LOGICAL     diagDif, diagAdv
       INTEGER km1, km2, kp1, kp2
       _RL df (1-OLx:sNx+OLx,1-OLy:sNy+OLy)
+      _RL chi (1-OLx:sNx+OLx,1-OLy:sNy+OLy)
       _RL af (1-OLx:sNx+OLx,1-OLy:sNy+OLy)
       _RL div(1-OLx:sNx+OLx,1-OLy:sNy+OLy)
       _RL flx(1-OLx:sNx+OLx,1-OLy:sNy+OLy)
@@ -317,6 +318,14 @@ cc#endif
      &            * (gTracer(i,j,k) - gTracer(i,j,k-1))
      &            * maskC(i,j,k,bi,bj)
      &            * maskC(i,j,k-1,bi,bj)
+               chi(i,j) = 1
+     &            * kappaRX(i,j,k)
+     &            * recip_drC(k)*rkSign
+     &            * recip_drC(k)*rkSign
+     &            * (gTracer(i,j,k) - gTracer(i,j,k-1))
+     &            * (gTracer(i,j,k) - gTracer(i,j,k-1))
+     &            * maskC(i,j,k,bi,bj)
+     &            * maskC(i,j,k-1,bi,bj)
              ENDDO
             ENDDO
           ELSE
@@ -333,6 +342,10 @@ C         since skipping k=1 DIAGNOSTICS_FILL call.
            diagName = 'DFrI'//diagSufx
            CALL DIAGNOSTICS_FILL(df,diagName, k,1, 2,bi,bj, myThid)
            IF ( k.EQ.2 ) CALL DIAGNOSTICS_COUNT(diagName,bi,bj,myThid)
+           diagName = 'CHIZ'//diagSufx
+           CALL DIAGNOSTICS_FILL(chi,diagName, k,1, 2,bi,bj, myThid)
+           IF ( k.EQ.2 ) CALL DIAGNOSTICS_COUNT(diagName,bi,bj,myThid)
+
 #ifdef ALLOW_LAYERS
            IF ( useLayers ) THEN
              CALL LAYERS_FILL( df, tracerIdentity, 'DFR',
