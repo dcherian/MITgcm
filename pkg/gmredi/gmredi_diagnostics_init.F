@@ -210,7 +210,23 @@ c     IF ( useDiagnotics ) THEN
         CALL DIAGNOSTICS_ADDTOLIST( diagNum,
      I    diagName, diagCode, diagUnits, diagTitle, diagMate, myThid )
 
+        diagName  = 'GM_CHIXO'
+        diagTitle = 'Redi Temp variance dissipation rate: X component'
+        diagUnits = 'degC^2/s      '
+        diagCode  = 'SU P    MR      '
+        diagMate  = diagNum
+        CALL DIAGNOSTICS_ADDTOLIST( diagNum,
+     I    diagName, diagCode, diagUnits, diagTitle, diagMate, myThid )
+
         diagName  = 'GM_CHIY'
+        diagTitle = 'Redi Temp variance dissipation rate: Y component'
+        diagUnits = 'degC^2/s      '
+        diagCode  = 'SV P    MR      '
+        diagMate  = diagNum
+        CALL DIAGNOSTICS_ADDTOLIST( diagNum,
+     I    diagName, diagCode, diagUnits, diagTitle, diagMate, myThid )
+
+        diagName  = 'GM_CHIYO'
         diagTitle = 'Redi Temp variance dissipation rate: Y component'
         diagUnits = 'degC^2/s      '
         diagCode  = 'SV P    MR      '
